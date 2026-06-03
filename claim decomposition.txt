@@ -1,0 +1,32 @@
+import re
+
+
+def _basic_sentence_split(text):
+    parts = re.split(r"(?<=[.!?])\s+", text.strip())
+    cleaned_parts = []
+
+    for part in parts:
+        cleaned = part.strip().strip('"').strip("'")
+        if cleaned:
+            cleaned_parts.append(cleaned)
+
+    return cleaned_parts
+
+
+def decompose_claims(text):
+    """Break a summary into smaller claim-like sentences."""
+    try:
+        import spacy
+
+        nlp = spacy.load("en_core_sci_sm")
+    except Exception:
+        return _basic_sentence_split(text)
+
+    doc = nlp(text)
+    claims = []
+    for sentence in doc.sents:
+        cleaned = sentence.text.strip().strip('"').strip("'")
+        if cleaned:
+            claims.append(cleaned)
+
+    return claims
